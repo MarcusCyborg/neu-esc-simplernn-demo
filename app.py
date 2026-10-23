@@ -199,14 +199,27 @@ st.markdown(
     .st-key-result-panel {
       margin-top: .25rem;
       padding: 1.1rem 1.25rem .85rem;
+      gap: .5rem;
       animation: reveal .45s cubic-bezier(.22, 1, .36, 1) both;
     }
-    .st-key-result-panel h3 { margin: 0 0 .25rem; color: var(--ink); }
+    .st-key-result-panel h3 {
+      margin: 0;
+      padding: .25rem 0 0;
+      color: var(--ink);
+    }
+    .st-key-result-panel h4 {
+      margin: 0;
+      padding: .25rem 0 .5rem;
+    }
+    .st-key-result-panel [data-testid="stMarkdownContainer"]:has(h3),
+    .st-key-result-panel [data-testid="stMarkdownContainer"]:has(h4) {
+      margin-bottom: 0;
+    }
     .result-chip {
       display: inline-flex;
       align-items: center;
       gap: .45rem;
-      margin-bottom: .5rem;
+      margin-bottom: 0;
       padding: .42rem .72rem;
       border-radius: 999px;
       background: #e9eefc;
