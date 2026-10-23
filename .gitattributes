@@ -1,0 +1,12 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.cmd text eol=crlf
+# Giữ nguyên từng byte của artifact xuất từ notebook.
+artifacts/** -text
+*.jpg binary
+*.png binary
+*.keras binary

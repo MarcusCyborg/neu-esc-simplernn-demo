@@ -1,0 +1,27 @@
+{
+  "source_zip": "run_20261023_065529_443169.zip",
+  "source_zip_sha256": "fab30a4104e71eded0095032aefd01f3f0c240d2b7dee290b4c508431dca3ff4",
+  "files_sha256": {
+    "vocabulary.json": "baec58af6caf886f19dbe0ff9968b56000fae9993e22195e266b7c3cafd49188",
+    "preprocessing.py": "c26a962314bc54c7d4e8b74c1ab4495ec8643338ec5128e9ce0d65077848db18",
+    "predict.py": "c40b6dc51a9c78bac9fd01cd730f7296a014ffe31d54a9dc976beb4ed8c2a080",
+    "confusion_matrix.png": "19fc22ea22bc6682c48029550236d152e45975e05dbb9d0d5222e568f0f9224d",
+    "config.json": "86396eaf7a66bf5caefecadd5128cfc0babef75a305553d444d082b074227ff0",
+    "training_history.csv": "9f866f4050bc446bb5ac94e2a4eeb3552632ac53ec370999ef0f75e2250d8bc1",
+    "fit_065536_742290.weights.h5": "388b1613237e2a295b58d40fa559b07be311e4d4b633d98a983e87ff7ecf8e6b",
+    "README.md": "cbd18ebcf2a9b6755e981c663e6a5a128aa57e943f477c0326d6aca0acf644ec",
+    "training_curves.png": "f74f2d2024e9936df720afa3c3d4daf5f94a66a27e3721cb64b8a56bf5c9ce6b",
+    "classification_report.csv": "81ec9a6d28b45959f35746ccc961a03a8784d6bdeed9bcf88729d8fea1cc68df",
+    "sample_manifest.csv": "9a3c706b9e6edb92aec4c9ed999b495b28ed3911b4fd1520f2be80a5c2b440a9",
+    "dataset_overview.png": "b16c4c84e5e4e1bb3192c733cef248b968469a0f17ec424a4ecee2732f6ef2af",
+    "subset_counts.csv": "eeb3baab65d36a3681012bbd8b3deae7059e6e858b2f22dba88621f99329194d",
+    "model_comparison.csv": "8602ed0c378aec9da722b69b6bba7972eee57e6a3cd8046f83963cff5127b08c",
+    "model.keras": "c4a9b1240c17c329269ec1a79ae84a53e8ac422b6e411240053b77f86d8e171a",
+    "metrics.json": "73e63cf8d1ffedec9341b4089a08d6cdf99b2c042849f826308c78ee25a5ec45",
+    "environment.json": "4ede856264a5aba3acd76863df8911b3da2aec8c033d2cdd4648eee8298b1d26",
+    "original_counts.csv": "548884e786440d56eeb550cd4c70774078f2ad13edeae37c3cfeb9e62692a70b",
+    "requirements-inference.txt": "870d677d79580f35053abbd49ca032f1013c8d21f607e6988af3927412dc2a14",
+    "test_predictions.csv": "359ddc54d1b548335f9b5b687b58e15e5f4a31dd398d76a468ff790fd40b4545",
+    "label_map.json": "b8333ccdf216639a1c15409fd8cdab3719579171117482b47e7c16dcec890807"
+  }
+}

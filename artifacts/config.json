@@ -1,0 +1,30 @@
+{
+  "SEED": 42,
+  "SAMPLE_FRACTION": 0.3,
+  "MAX_TOKENS": 10000,
+  "MAX_LENGTH": 64,
+  "EMBEDDING_DIM": 64,
+  "RNN_UNITS": 64,
+  "DROPOUT": 0.2,
+  "BATCH_SIZE": 64,
+  "MAX_EPOCHS": 6,
+  "LEARNING_RATE": 0.001,
+  "PATIENCE": 2,
+  "TRAIN_BUDGET_MINUTES": 25,
+  "actual_vocabulary_size": 6630,
+  "class_weight": {
+    "0": 0.36153524367287176,
+    "1": 1.9890678941311852,
+    "2": 1.5872359963269054,
+    "3": 9.877142857142857
+  },
+  "normalization": "Unicode NFC -> lowercase -> collapse whitespace",
+  "truncation": "Keep the first MAX_LENGTH whitespace tokens; right padding",
+  "source_zip_sha256": "ad2cc3557cc603bed21d5884076b638f2e3d61dbb9d21762f7ca75679c1603b0",
+  "row_id_definition": "Zero-based data row in the original split CSV, excluding header",
+  "subset_sizes": {
+    "train": 6914,
+    "val": 992,
+    "test": 1984
+  }
+}

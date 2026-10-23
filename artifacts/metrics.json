@@ -1,0 +1,35 @@
+{
+  "validation": {
+    "accuracy": 0.6320564516129032,
+    "macro_f1": 0.5331252261616096
+  },
+  "test": {
+    "accuracy": 0.6376008064516129,
+    "macro_f1": 0.5465730327531811,
+    "f1_toxic": 0.4852941176470588
+  },
+  "baseline_test": {
+    "accuracy": 0.6890120967741935,
+    "macro_f1": 0.20396896448821247,
+    "f1_toxic": 0.0
+  },
+  "test_support": [
+    1367,
+    250,
+    314,
+    53
+  ],
+  "train_seconds": 47.316811409000024,
+  "epochs_run": 6,
+  "best_epoch_by_val_loss": 5,
+  "epoch_seconds": [
+    10.892749324000022,
+    7.294353091000005,
+    7.319899054000018,
+    7.24606999599996,
+    7.3154728490000025,
+    7.2070267349999995
+  ],
+  "time_budget_stop_reason": "",
+  "evaluation_scope": "Stratified subset of the official NEU-ESC test split"
+}

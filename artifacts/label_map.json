@@ -1,0 +1,18 @@
+{
+  "0": {
+    "name": "Neutral",
+    "vietnamese": "Trung tính"
+  },
+  "1": {
+    "name": "Positive",
+    "vietnamese": "Tích cực"
+  },
+  "2": {
+    "name": "Negative",
+    "vietnamese": "Tiêu cực"
+  },
+  "3": {
+    "name": "Toxic",
+    "vietnamese": "Độc hại"
+  }
+}

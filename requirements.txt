@@ -1,0 +1,4 @@
+# Phiên bản model lấy nguyên từ ZIP của lần train chính thức.
+-r artifacts/requirements-inference.txt
+streamlit==1.66.1
+altair==5.5.0
