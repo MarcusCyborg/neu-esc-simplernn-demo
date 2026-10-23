@@ -13,7 +13,240 @@ from inference import (
     missing_artifacts, predict_text,
 )
 
-st.set_page_config(page_title="Phân tích bình luận tiếng Việt", layout="centered")
+st.set_page_config(
+    page_title="EduSentiment · Phân tích bình luận",
+    page_icon="◒",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+st.markdown(
+    """
+    <style>
+    :root {
+      --ink: #16213a;
+      --muted: #667085;
+      --paper: #f5f7fb;
+      --panel: #ffffff;
+      --line: #dbe2ee;
+      --blue: #3563e9;
+      --blue-deep: #2746b8;
+      --orange: #f28c28;
+      --shadow: 0 18px 45px rgba(29, 52, 96, .10);
+    }
+    .stApp {
+      background:
+        radial-gradient(circle at 10% 0%, rgba(242, 140, 40, .13), transparent 30rem),
+        radial-gradient(circle at 95% 12%, rgba(53, 99, 233, .12), transparent 32rem),
+        var(--paper);
+      color: var(--ink);
+    }
+    [data-testid="stHeader"] { background: transparent; }
+    [data-testid="stToolbar"] { right: 1rem; }
+    [data-testid="stMainBlockContainer"] {
+      max-width: 1120px;
+      padding-top: 2.25rem;
+      padding-bottom: 4rem;
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin: 0 0 1.6rem;
+      padding: 2.2rem 2.35rem 2rem;
+      border: 1px solid rgba(219, 226, 238, .9);
+      border-radius: 28px;
+      background: linear-gradient(135deg, #1d2d56 0%, #243c7d 58%, #315fd7 100%);
+      box-shadow: 0 24px 60px rgba(26, 50, 106, .20);
+      color: white;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -58px;
+      top: -72px;
+      border: 28px solid rgba(255, 255, 255, .10);
+      border-radius: 50%;
+    }
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0;
+      color: white;
+      /* Segoe UI/Noto Sans include the Vietnamese glyphs used in this heading. */
+      font-family: "Segoe UI", "Noto Sans", "Arial Unicode MS", Arial, sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4.25rem);
+      line-height: .98;
+      letter-spacing: -.045em;
+      font-weight: 800;
+    }
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      margin: 1rem 0 0;
+      color: rgba(255, 255, 255, .82);
+      font-size: 1.04rem;
+      line-height: 1.6;
+    }
+    .hero-meta {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: 1.5rem;
+    }
+    .hero-meta span {
+      padding: .42rem .72rem;
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .10);
+      color: rgba(255, 255, 255, .9);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .section-label {
+      margin: 1.9rem 0 .65rem;
+      color: var(--blue-deep);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    [data-testid="stTextArea"] textarea {
+      min-height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .92);
+      color: var(--ink);
+      box-shadow: 0 10px 24px rgba(29, 52, 96, .06);
+      font-size: 1.06rem;
+      line-height: 1.55;
+      padding: 1rem 1.05rem;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    [data-testid="stTextArea"] textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(53, 99, 233, .14), 0 12px 28px rgba(29, 52, 96, .08);
+      transform: translateY(-1px);
+    }
+    [data-testid="stTextArea"] label, [data-testid="stSelectbox"] label {
+      color: var(--ink);
+      font-weight: 800;
+      font-size: .9rem;
+    }
+    [data-testid="stSelectbox"] > div > div {
+      border-radius: 13px;
+      border-color: var(--line);
+      background: rgba(255, 255, 255, .88);
+    }
+    .hint {
+      margin: .45rem 0 0;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    [data-testid="stButton"] button {
+      width: 100%;
+      min-height: 3.2rem;
+      margin-top: .65rem;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--orange), #ffb04b);
+      color: #281505;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .01em;
+      box-shadow: 0 10px 22px rgba(242, 140, 40, .26);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    [data-testid="stButton"] button:hover {
+      filter: saturate(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 27px rgba(242, 140, 40, .34);
+    }
+    [data-testid="stButton"] button:focus-visible {
+      outline: 3px solid rgba(53, 99, 233, .35);
+      outline-offset: 3px;
+    }
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .7rem;
+      margin: 1.2rem 0 2rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .65rem .7rem;
+      border: 1px solid rgba(219, 226, 238, .9);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, .65);
+      color: var(--ink);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+    .legend-dot { width: .58rem; height: .58rem; border-radius: 50%; flex: 0 0 auto; }
+    .st-key-input-panel, .st-key-result-panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .84);
+      box-shadow: var(--shadow);
+    }
+    .st-key-input-panel {
+      padding: 1.1rem 1.25rem .55rem;
+    }
+    .st-key-result-panel {
+      margin-top: 1.7rem;
+      padding: 1.1rem 1.25rem .85rem;
+      animation: reveal .45s cubic-bezier(.22, 1, .36, 1) both;
+    }
+    .st-key-result-panel h3 { margin: 0 0 .25rem; color: var(--ink); }
+    .result-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      margin-bottom: .5rem;
+      padding: .42rem .72rem;
+      border-radius: 999px;
+      background: #e9eefc;
+      color: var(--blue-deep);
+      font-size: .8rem;
+      font-weight: 800;
+    }
+    [data-testid="stExpander"] {
+      margin-top: 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, .76);
+    }
+    [data-testid="stMetric"] {
+      padding: .85rem .9rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfcff;
+    }
+    [data-testid="stMetricLabel"] { color: var(--muted); }
+    [data-testid="stMetricValue"] { color: var(--ink); }
+    [data-testid="stAlert"] { border-radius: 14px; }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @media (max-width: 760px) {
+      [data-testid="stMainBlockContainer"] { padding: 1rem 1rem 3rem; }
+      .hero { padding: 1.5rem 1.35rem 1.4rem; border-radius: 22px; }
+      .hero h1 { font-size: 2.45rem; }
+      .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 EXAMPLES = {
     "Tự nhập bình luận": "",
@@ -49,30 +282,32 @@ def read_config():
 
 
 def show_scores(result):
-    st.subheader(f"Nhãn dự đoán: {result['label']}")
-    if result.get("truncated"):
-        st.warning(
-            f"Bình luận có {result['token_count']} token sau chuẩn hóa. "
-            f"Mô hình chỉ sử dụng {result['max_length']} token đầu tiên."
+    with st.container(border=True, key="result-panel"):
+        st.markdown('<span class="result-chip">● KẾT QUẢ SUY LUẬN</span>', unsafe_allow_html=True)
+        st.subheader(f"Nhãn dự đoán: {result['label']}")
+        if result.get("truncated"):
+            st.warning(
+                f"Bình luận có {result['token_count']} token sau chuẩn hóa. "
+                f"Mô hình chỉ sử dụng {result['max_length']} token đầu tiên."
+            )
+        st.markdown("#### Điểm dự đoán của mô hình")
+        rows = [
+            {"Nhãn": label, "Điểm": score, "Hiển thị": f"{score:.1%}"}
+            for label, score in zip(LABEL_VI, result["scores"])
+        ]
+        # DataFrame tạo dataset có tên theo nội dung để biểu đồ cập nhật sau mỗi câu.
+        base = alt.Chart(pd.DataFrame(rows)).encode(
+            y=alt.Y("Nhãn:N", sort=list(LABEL_VI), title=None),
+            x=alt.X("Điểm:Q", scale=alt.Scale(domain=[0, 1.15]),
+                      axis=alt.Axis(format="%", values=[0, .25, .5, .75, 1]), title=None),
         )
-    st.markdown("#### Điểm dự đoán của mô hình")
-    rows = [
-        {"Nhãn": label, "Điểm": score, "Hiển thị": f"{score:.1%}"}
-        for label, score in zip(LABEL_VI, result["scores"])
-    ]
-    # DataFrame tạo dataset có tên theo nội dung để biểu đồ cập nhật sau mỗi câu.
-    base = alt.Chart(pd.DataFrame(rows)).encode(
-        y=alt.Y("Nhãn:N", sort=list(LABEL_VI), title=None),
-        x=alt.X("Điểm:Q", scale=alt.Scale(domain=[0, 1.15]),
-                  axis=alt.Axis(format="%", values=[0, .25, .5, .75, 1]), title=None),
-    )
-    bars = base.mark_bar(size=25).encode(
-        color=alt.Color("Nhãn:N", scale=alt.Scale(domain=list(LABEL_VI), range=COLORS), legend=None),
-        tooltip=["Nhãn:N", alt.Tooltip("Điểm:Q", format=".2%")],
-    )
-    labels = base.mark_text(align="left", dx=7, color="#172033", fontSize=14).encode(text="Hiển thị:N")
-    st.altair_chart((bars + labels).properties(height=205).configure_view(stroke=None), width="stretch")
-    st.caption("Điểm softmax không phải độ chính xác được bảo đảm cho từng câu.")
+        bars = base.mark_bar(size=25).encode(
+            color=alt.Color("Nhãn:N", scale=alt.Scale(domain=list(LABEL_VI), range=COLORS), legend=None),
+            tooltip=["Nhãn:N", alt.Tooltip("Điểm:Q", format=".2%")],
+        )
+        labels = base.mark_text(align="left", dx=7, color="#172033", fontSize=14).encode(text="Hiển thị:N")
+        st.altair_chart((bars + labels).properties(height=205).configure_view(stroke=None), width="stretch")
+        st.caption("Điểm softmax không phải độ chính xác được bảo đảm cho từng câu.")
 
 
 def show_information():
@@ -114,16 +349,39 @@ def show_information():
         st.markdown("**Giới hạn:** Câu dài bị cắt theo cấu hình. Mỉa mai, tiếng lóng, ngữ cảnh thiếu và lớp ít mẫu (đặc biệt Toxic) có thể gây dự đoán sai. Kết quả chỉ phục vụ minh họa mô hình.")
 
 
-st.title("Phân tích bình luận tiếng Việt")
-st.write("Phân loại 4 nhãn với mô hình SimpleRNN được huấn luyện trên NEU-ESC.")
+st.markdown(
+    """
+    <section class="hero">
+      <h1>Đọc sắc thái<br>của từng câu chữ.</h1>
+      <p>EduSentiment dùng SimpleRNN để phân loại bình luận tiếng Việt thành bốn nhãn — nhanh, trực quan và đủ rõ để trình bày trước lớp.</p>
+      <div class="hero-meta">
+        <span>NEU-ESC</span><span>SimpleRNN</span><span>4 nhãn cảm xúc</span><span>CPU · local demo</span>
+      </div>
+    </section>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown('<div class="section-label">01 · Viết một câu</div>', unsafe_allow_html=True)
+st.markdown("### Bạn muốn mô hình đọc câu nào?", unsafe_allow_html=True)
+st.markdown('<p class="hint">Nhập trực tiếp hoặc chọn một mẫu ở bên dưới, sau đó bấm phân tích để xem phân bố điểm.</p>', unsafe_allow_html=True)
 missing = missing_artifacts()
 if missing:
     st.warning("Thiếu artifact: " + ", ".join(missing) + ". Đặt các file vào: " + str(DEFAULT_ARTIFACT_DIR))
-st.text_area("Nhập bình luận", key="comment", height=140,
-             placeholder="Nhập một bình luận tiếng Việt…", on_change=clear_result)
-st.selectbox("Thử một bình luận mẫu", list(EXAMPLES), key="example", on_change=choose_example)
-st.caption("Các câu mẫu chỉ để thử giao diện; nhãn được xác định bởi mô hình khi bấm Phân tích.")
-clicked = st.button("Phân tích", type="primary")
+with st.container(border=True, key="input-panel"):
+    st.text_area("Nhập bình luận", key="comment", height=140,
+                 placeholder="Nhập một bình luận tiếng Việt…", on_change=clear_result)
+    st.selectbox("Thử một bình luận mẫu", list(EXAMPLES), key="example", on_change=choose_example)
+    st.caption("Các câu mẫu chỉ để thử giao diện; nhãn được xác định bởi mô hình khi bấm Phân tích.")
+    clicked = st.button("Phân tích", type="primary")
+    st.markdown(
+        '<div class="legend">'
+        '<div class="legend-item"><span class="legend-dot" style="background:#6B7280"></span>Trung tính</div>'
+        '<div class="legend-item"><span class="legend-dot" style="background:#238443"></span>Tích cực</div>'
+        '<div class="legend-item"><span class="legend-dot" style="background:#C96813"></span>Tiêu cực</div>'
+        '<div class="legend-item"><span class="legend-dot" style="background:#C63333"></span>Độc hại</div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 text = st.session_state.get("comment", "")
 if clicked:
     clear_result()
