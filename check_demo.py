@@ -12,7 +12,7 @@ from unittest.mock import patch
 import numpy as np
 
 from inference import (
-    DEFAULT_ARTIFACT_DIR, LABEL_NAMES, ArtifactError, load_artifacts,
+    DEFAULT_ARTIFACT_DIR, LABEL_NAMES, LABEL_VI, ArtifactError, load_artifacts,
     load_metrics, missing_artifacts, predict_text,
 )
 
@@ -103,6 +103,7 @@ def check_real_inference(directory):
 
 def check_ui(artifacts=None):
     from streamlit.testing.v1 import AppTest
+    import pyarrow as pa
 
     at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60).run()
     assert not at.exception, at.exception
@@ -118,6 +119,30 @@ def check_ui(artifacts=None):
         expected = predict_text(sentence, artifacts)
         # So sánh điểm trong session với pipeline độc lập để kiểm tra tích hợp UI.
         np.testing.assert_allclose(at.session_state["result"]["scores"], expected["scores"], rtol=1e-5, atol=1e-6)
+        previous_dataset = None
+        for next_sentence in (
+            "Giảng viên giải thích rất dễ hiểu, mình học được nhiều điều.",
+            "Mình không hài lòng với cách xử lý này.",
+            "Bạn nói chuyện thật vô văn hóa!",
+        ):
+            # Gửi câu mới và bấm nút trong cùng một lượt, không tạo phiên mới.
+            at.text_area[0].input(next_sentence)
+            with patch("inference.load_artifacts", side_effect=AssertionError("Model bị nạp lại thay vì dùng cache")):
+                at.button[0].click().run()
+            assert not at.exception, at.exception
+            expected = predict_text(next_sentence, artifacts)
+            assert at.session_state["result"]["text"] == next_sentence
+            np.testing.assert_allclose(at.session_state["result"]["scores"], expected["scores"], rtol=1e-5, atol=1e-6)
+            # Kiểm tra cả dữ liệu gửi tới biểu đồ, không chỉ kết quả trong session.
+            chart = at.get("vega_lite_chart")[0].proto
+            dataset_name = json.loads(chart.spec)["data"]["name"]
+            assert dataset_name != previous_dataset, "Biểu đồ phải nhận dataset mới khi điểm thay đổi"
+            dataset = next(item for item in chart.datasets if item.name == dataset_name)
+            rows = pa.ipc.open_stream(dataset.data.data).read_all().to_pydict()
+            assert rows["Nhãn"] == list(LABEL_VI)
+            np.testing.assert_allclose(rows["Điểm"], expected["scores"], rtol=1e-5, atol=1e-6)
+            assert rows["Hiển thị"] == [f"{score:.1%}" for score in expected["scores"]]
+            previous_dataset = dataset_name
         at.text_area[0].input("Câu đã sửa, chưa bấm phân tích").run()
         assert not at.exception
         assert "result" not in at.session_state, "Kết quả cũ phải bị xóa khi thay câu"
@@ -135,7 +160,7 @@ def check_ui(artifacts=None):
         assert not missing.exception
         messages = [item.value for item in [*missing.warning, *missing.info, *missing.error]]
         assert any("model.keras" in message for message in messages)
-    print("PASS: Streamlit nhập câu, dự đoán thật, chọn mẫu, xóa kết quả cũ và báo thiếu file")
+    print("PASS: Streamlit phân tích liên tiếp, cập nhật dữ liệu biểu đồ, chọn mẫu, xóa kết quả cũ và báo thiếu file")
 
 
 def main():

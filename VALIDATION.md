@@ -65,3 +65,20 @@ Accuracy của model thấp hơn baseline lớp đa số, trong khi Macro-F1 cao
 Không diễn giải đây là kết quả trên toàn bộ test gốc. Lớp Toxic trong subset test
 chỉ có 53 mẫu. Không chạy lại đánh giá toàn bộ dataset; các chỉ số trên lấy nguyên
 từ artifact, đúng phạm vi demo được yêu cầu.
+
+## Sửa lỗi biểu đồ giữ điểm cũ khi phân tích câu tiếp theo
+
+Đã tái hiện trên trình duyệt: đổi từ câu khen sang câu phàn nàn làm nhãn đổi sang
+Tiêu cực, nhưng biểu đồ vẫn giữ điểm Tích cực 94,3% của câu trước. Dữ liệu inline
+trong biểu đồ Altair không được cập nhật đúng trong phiên Streamlit đang mở.
+
+Chuyển nguồn dữ liệu biểu đồ sang DataFrame để Streamlit tạo dataset có tên theo
+nội dung. Khi điểm đổi, cả thanh và nhãn phần trăm nhận dataset mới.
+
+Đã kiểm tra trong cùng một phiên trình duyệt, chỉ sửa câu và bấm Phân tích:
+Tiêu cực 74,8% -> Tích cực 94,3% -> Độc hại 49,6% -> Tiêu cực 74,8%.
+Không tải lại trang giữa các câu. Ảnh: `screenshots/repeated-analysis.jpg`.
+
+`check_demo.py --require-model` đã chạy thành công sau sửa. Kiểm tra bổ sung gửi
+ba câu liên tiếp trong cùng session, đối chiếu điểm trong session và dataset của
+biểu đồ với suy luận thật, kiểm tra thứ tự nhãn, chữ phần trăm và model cache.

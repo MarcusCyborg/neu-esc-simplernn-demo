@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 import altair as alt
+import pandas as pd
 import streamlit as st
 
 from inference import (
@@ -59,7 +60,8 @@ def show_scores(result):
         {"Nhãn": label, "Điểm": score, "Hiển thị": f"{score:.1%}"}
         for label, score in zip(LABEL_VI, result["scores"])
     ]
-    base = alt.Chart(alt.Data(values=rows)).encode(
+    # DataFrame tạo dataset có tên theo nội dung để biểu đồ cập nhật sau mỗi câu.
+    base = alt.Chart(pd.DataFrame(rows)).encode(
         y=alt.Y("Nhãn:N", sort=list(LABEL_VI), title=None),
         x=alt.X("Điểm:Q", scale=alt.Scale(domain=[0, 1.15]),
                   axis=alt.Axis(format="%", values=[0, .25, .5, .75, 1]), title=None),
