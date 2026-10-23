@@ -51,8 +51,8 @@ st.markdown(
     .hero {
       position: relative;
       overflow: hidden;
-      margin: 0 0 1.6rem;
-      padding: 2.2rem 2.35rem 2rem;
+      margin: 0 0 1rem;
+      padding: 1.5rem 2rem;
       border: 1px solid rgba(219, 226, 238, .9);
       border-radius: 28px;
       background: linear-gradient(135deg, #1d2d56 0%, #243c7d 58%, #315fd7 100%);
@@ -72,24 +72,25 @@ st.markdown(
     .hero h1 {
       position: relative;
       z-index: 1;
-      max-width: 720px;
+      max-width: 100%;
       margin: 0;
       color: white;
       /* Segoe UI/Noto Sans include the Vietnamese glyphs used in this heading. */
       font-family: "Segoe UI", "Noto Sans", "Arial Unicode MS", Arial, sans-serif;
-      font-size: clamp(2.2rem, 5vw, 4.25rem);
-      line-height: .98;
-      letter-spacing: -.045em;
-      font-weight: 800;
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      line-height: 1.25;
+      letter-spacing: -.025em;
+      font-weight: 700;
+      white-space: nowrap;
     }
     .hero p {
       position: relative;
       z-index: 1;
-      max-width: 620px;
-      margin: 1rem 0 0;
+      max-width: 800px;
+      margin: .65rem 0 0;
       color: rgba(255, 255, 255, .82);
-      font-size: 1.04rem;
-      line-height: 1.6;
+      font-size: .95rem;
+      line-height: 1.5;
     }
     .hero-meta {
       position: relative;
@@ -97,7 +98,7 @@ st.markdown(
       display: flex;
       flex-wrap: wrap;
       gap: .55rem;
-      margin-top: 1.5rem;
+      margin-top: .9rem;
     }
     .hero-meta span {
       padding: .42rem .72rem;
@@ -109,16 +110,8 @@ st.markdown(
       font-weight: 700;
       letter-spacing: .03em;
     }
-    .section-label {
-      margin: 1.9rem 0 .65rem;
-      color: var(--blue-deep);
-      font-size: .76rem;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
     [data-testid="stTextArea"] textarea {
-      min-height: 150px;
+      min-height: 75px;
       border: 1px solid var(--line);
       border-radius: 18px;
       background: rgba(255, 255, 255, .92);
@@ -176,7 +169,7 @@ st.markdown(
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: .7rem;
-      margin: 1.2rem 0 2rem;
+      margin: 0;
     }
     .legend-item {
       display: flex;
@@ -198,10 +191,13 @@ st.markdown(
       box-shadow: var(--shadow);
     }
     .st-key-input-panel {
-      padding: 1.1rem 1.25rem .55rem;
+      padding: 1.1rem 1.25rem 1.25rem;
+    }
+    .st-key-input-panel [data-testid="stMarkdownContainer"]:has(> .legend) {
+      margin-bottom: 0;
     }
     .st-key-result-panel {
-      margin-top: 1.7rem;
+      margin-top: .25rem;
       padding: 1.1rem 1.25rem .85rem;
       animation: reveal .45s cubic-bezier(.22, 1, .36, 1) both;
     }
@@ -239,8 +235,8 @@ st.markdown(
     }
     @media (max-width: 760px) {
       [data-testid="stMainBlockContainer"] { padding: 1rem 1rem 3rem; }
-      .hero { padding: 1.5rem 1.35rem 1.4rem; border-radius: 22px; }
-      .hero h1 { font-size: 2.45rem; }
+      .hero { padding: 1.2rem 1.25rem; border-radius: 22px; }
+      .hero h1 { font-size: clamp(1.25rem, 4.4vw, 2rem); }
       .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     </style>
@@ -352,8 +348,8 @@ def show_information():
 st.markdown(
     """
     <section class="hero">
-      <h1>Đọc sắc thái<br>của từng câu chữ.</h1>
-      <p>EduSentiment dùng SimpleRNN để phân loại bình luận tiếng Việt thành bốn nhãn — nhanh, trực quan và đủ rõ để trình bày trước lớp.</p>
+      <h1>Phân tích bình luận tiếng Việt</h1>
+      <p>EduSentiment dùng SimpleRNN để phân loại bình luận tiếng Việt thành bốn nhãn.</p>
       <div class="hero-meta">
         <span>NEU-ESC</span><span>SimpleRNN</span><span>4 nhãn cảm xúc</span><span>CPU · local demo</span>
       </div>
@@ -361,17 +357,15 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.markdown('<div class="section-label">01 · Viết một câu</div>', unsafe_allow_html=True)
 st.markdown("### Bạn muốn mô hình đọc câu nào?", unsafe_allow_html=True)
 st.markdown('<p class="hint">Nhập trực tiếp hoặc chọn một mẫu ở bên dưới, sau đó bấm phân tích để xem phân bố điểm.</p>', unsafe_allow_html=True)
 missing = missing_artifacts()
 if missing:
     st.warning("Thiếu artifact: " + ", ".join(missing) + ". Đặt các file vào: " + str(DEFAULT_ARTIFACT_DIR))
 with st.container(border=True, key="input-panel"):
-    st.text_area("Nhập bình luận", key="comment", height=140,
+    st.text_area("Nhập bình luận", key="comment", height=75,
                  placeholder="Nhập một bình luận tiếng Việt…", on_change=clear_result)
     st.selectbox("Thử một bình luận mẫu", list(EXAMPLES), key="example", on_change=choose_example)
-    st.caption("Các câu mẫu chỉ để thử giao diện; nhãn được xác định bởi mô hình khi bấm Phân tích.")
     clicked = st.button("Phân tích", type="primary")
     st.markdown(
         '<div class="legend">'
